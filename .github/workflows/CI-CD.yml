@@ -1,0 +1,84 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+jobs:
+  dev-merge:
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies for Backend and Frontend
+        run: |
+          cd backend
+          npm install
+          cd ../frontend
+          npm install
+
+      - name: Run Unit Tests (Backend)
+        run: |
+          cd backend
+          npm test
+
+      - name: Run Unit Tests (Frontend)
+        run: |
+          cd frontend
+          npm test
+
+      - name: Merge dev to main (if tests pass)
+        if: success()
+        run: |
+          git checkout main
+          git merge dev
+          git push origin main
+
+  main-merge:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies for Backend and Frontend
+        run: |
+          cd backend
+          npm install
+          cd ../frontend
+          npm install
+
+      - name: Run Unit Tests (Backend)
+        run: |
+          cd backend
+          npm test
+
+      - name: Run Unit Tests (Frontend)
+        run: |
+          cd frontend
+          npm test
+
+      - name: Build Docker Images
+        run: |
+          docker-compose -f docker-compose.yml build
+
+      - name: Push Docker Images to Docker Hub
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker-compose -f docker-compose.yml push
