@@ -31,9 +31,9 @@ jobs:
       - name: Run unit tests (backend & frontend)
         run: |
           cd backend
-          npm test
+          npx jest
           cd ../frontend
-          npm test
+          npx jest
 
       - name: Merge dev into main (if tests pass)
         run: |
@@ -67,9 +67,9 @@ jobs:
       - name: Run unit tests (backend & frontend)
         run: |
           cd backend
-          npm test
+          npx jest
           cd ../frontend
-          npm test
+          npx jest
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
