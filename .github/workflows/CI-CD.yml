@@ -28,14 +28,20 @@ jobs:
           cd ../frontend
           npm install
 
-      - name: Ensure jest has execute permissions
-        run: chmod +x ./node_modules/.bin/jest
+      - name: Ensure jest has execute permissions (backend)
+        run: chmod +x backend/node_modules/.bin/@jest
 
-      - name: Run unit tests (backend & frontend)
+      - name: Ensure jest has execute permissions (frontend)
+        run: chmod +x frontend/node_modules/.bin/@jest
+
+      - name: Run unit tests (backend)
         run: |
           cd backend
           npx jest
-          cd ../frontend
+
+      - name: Run unit tests (frontend)
+        run: |
+          cd frontend
           npx jest
 
       - name: Merge dev into main (if tests pass)
@@ -67,14 +73,20 @@ jobs:
           cd ../frontend
           npm install
 
-      - name: Ensure jest has execute permissions
-        run: chmod +x ./node_modules/.bin/jest
+      - name: Ensure jest has execute permissions (backend)
+        run: chmod +x backend/node_modules/.bin/@jest
 
-      - name: Run unit tests (backend & frontend)
+      - name: Ensure jest has execute permissions (frontend)
+        run: chmod +x frontend/node_modules/.bin/@jest
+
+      - name: Run unit tests (backend)
         run: |
           cd backend
           npx jest
-          cd ../frontend
+
+      - name: Run unit tests (frontend)
+        run: |
+          cd frontend
           npx jest
 
       - name: Set up Docker Buildx
