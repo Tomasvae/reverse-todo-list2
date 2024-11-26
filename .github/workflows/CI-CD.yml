@@ -28,6 +28,9 @@ jobs:
           cd ../frontend
           npm install
 
+      - name: Ensure jest has execute permissions
+        run: chmod +x ./node_modules/.bin/jest
+
       - name: Run unit tests (backend & frontend)
         run: |
           cd backend
@@ -63,6 +66,9 @@ jobs:
           npm install
           cd ../frontend
           npm install
+
+      - name: Ensure jest has execute permissions
+        run: chmod +x ./node_modules/.bin/jest
 
       - name: Run unit tests (backend & frontend)
         run: |
