@@ -60,13 +60,11 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install dependencies (backend & frontend)
-        run: |
-          cd backend
-          npm install
-          cd ../frontend
-          npm install
-
+      - name: Run unit tests (backend)
+      run: |
+        cd backend
+        npx --no-install jest
+      
       - name: Run unit tests (backend)
         run: |
           cd backend
