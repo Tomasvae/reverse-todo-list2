@@ -38,6 +38,11 @@ jobs:
           cd backend
           npx --no-install jest
 
+      - name: Fix permissions for Jest (frontend)
+        run: |
+          cd frontend
+          chmod +x ./node_modules/.bin/jest
+
       - name: Run unit tests (frontend)
         run: |
           cd frontend
@@ -81,6 +86,11 @@ jobs:
         run: |
           cd backend
           npx --no-install jest
+
+      - name: Fix permissions for Jest (frontend)
+        run: |
+          cd frontend
+          chmod +x ./node_modules/.bin/jest
 
       - name: Run unit tests (frontend)
         run: |
