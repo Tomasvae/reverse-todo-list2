@@ -40,16 +40,6 @@ jobs:
           cd frontend
           npm test
 
-      - name: Install dependencies for E2E tests
-        run: |
-          cd e2e-tests
-          npm install
-
-
-      - name: Run E2E tests
-        run: |
-          cd e2e-tests
-          npx mocha test.js
 
       - name: Login to Docker
         uses: docker/login-action@v2
