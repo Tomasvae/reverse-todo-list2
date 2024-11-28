@@ -1,0 +1,109 @@
+name: CI/CD Pipeline
+ 
+on:
+  push:
+    branches:
+      - dev
+      - main
+ 
+permissions:
+  contents: write
+ 
+jobs:
+  dev-workflow:
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+ 
+      - name: Dependencies install for backend
+        run: |
+          cd backend
+          npm install
+ 
+      - name: Tests for backend
+        run: |
+          cd backend
+          npm test
+ 
+      - name: Dependencies install for frontend
+        run: |
+          cd frontend
+          npm install
+ 
+      - name: Tests for frontend
+        run: |
+          cd frontend
+          npm test
+ 
+      - name: Merge Dev into Main
+        if: success()
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: dev
+          target_branch: main
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+ 
+      - name: Trigger Push Event on Main
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          git commit --allow-empty -m "Trigger push event after merge"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 
+         
+ 
+  main-workflow:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+ 
+      - name: Dependencies install for backend
+        run: |
+          cd backend
+          npm install
+ 
+      - name: Tests for backend
+        run: |
+          cd backend
+          npm test
+ 
+      - name: Dependencies install for frontend
+        run: |
+          cd frontend
+          npm install
+ 
+      - name: Tests for frontend
+        run: |
+          cd frontend
+          npm test
+ 
+      - name: Login to Docker
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+      - name: Install Docker compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+ 
+      - name: Verify Docker compose
+        run: docker-compose --version
+ 
+      - name: (Build/ Push) Docker image
+        run: |
+          docker-compose build
+          docker-compose push
