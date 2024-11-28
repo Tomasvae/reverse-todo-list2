@@ -1,4 +1,4 @@
-name: Feature to Dev Workflow
+name: Dev Workflow
 
 on:
   push:
@@ -18,12 +18,27 @@ jobs:
         uses: actions/checkout@v3
 
 
-      - name: Install dependencies
+      - name: Install dependencies for backend
         run: |
+          cd backend
           npm install
 
-      - name: Run unit tests
+
+      - name: Run unit tests for backend
         run: |
+          cd backend
+          npm test
+
+
+      - name: Install dependencies for frontend
+        run: |
+          cd frontend
+          npm install
+
+
+      - name: Run unit tests for frontend
+        run: |
+          cd frontend
           npm test
 
 
