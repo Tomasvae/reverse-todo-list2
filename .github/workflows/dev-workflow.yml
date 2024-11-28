@@ -1,0 +1,71 @@
+name: Feature to Dev Workflow
+
+on:
+  push:
+    branches:
+      - dev
+
+permissions:
+  contents: write
+
+jobs:
+  feature-to-dev-workflow:
+    if: startsWith(github.head_ref, 'my-feature')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+
+      - name: Run unit tests
+        run: |
+          npm test
+
+
+      - name: Proceed if unit tests pass
+        if: success()
+        run: echo "Unit tests passed. Proceeding to full workflow."
+
+
+      - name: Reinstall dependencies
+        if: success()
+        run: |
+          npm install
+
+
+      - name: Run unit tests again
+        if: success()
+        run: |
+          npm test
+
+
+      - name: Run E2E tests
+        if: success()
+        run: |
+          node e2e-tests/test.js
+
+
+      - name: Login to Docker
+        if: success()
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Install Docker Compose
+        if: success()
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Build and Push Docker Image
+        if: success()
+        run: |
+          docker-compose build
+          docker-compose push
