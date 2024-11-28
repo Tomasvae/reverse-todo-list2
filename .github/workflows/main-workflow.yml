@@ -36,6 +36,25 @@ jobs:
           cd frontend
           npm test
 
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+ 
+      - name: Verify Docker Compose
+        run: docker-compose --version
+ 
+      - name: Start application using Docker Compose
+        run: |
+          docker-compose up -d
+ 
+      - name: Wait for application to be ready
+        run: |
+          sleep 10
+ 
+      - name: Verify application is running
+        run: |
+          curl --fail http://localhost:3000/ || exit 1
       - name: Run E2E tests
         run: |
           cd e2e-tests
